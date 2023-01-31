@@ -1,4 +1,5 @@
 import paramiko
+from utils.logging import write_log
 
 class SSH:
     def __init__(self, hostname, username, password):
@@ -56,6 +57,9 @@ class SSH:
         # retornando muita sujeira além do necessário, o que deverá ser limpo depois.
         stdin, stdout, stderr = ssh_client.exec_command(f"cd {path}; ls -la --full-time")
         files = (stdout.read().decode()).split("\n")
+        # registra no arquivo de log os arquivos encontrados
+        write_log("Arquivos encontrados:")
+        write_log(files)
         return files
                
     def getLogFromFile(self, path, file, ssh_client):

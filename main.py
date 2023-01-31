@@ -4,6 +4,7 @@ from utils.email import Email
 from utils.managing_text import getFilesModifiedYesterday, getFileNameOnly, getFilteredLogs, getTaskName
 import os
 from dotenv import load_dotenv
+from utils.logging import write_log
 
 load_dotenv()
 
@@ -45,6 +46,9 @@ def prepareEmail(file_name, log):
             </body>
         </html>
     """
+    # Registra no log que está enviando email
+    write_log(f"Enviando email devido a erros na tarefa {task_name}")
+
     # Chama o método responsável por enviar o email
     email.sendEmail(TO_EMAIL, EMAIL_LOGIN, subject, message)
 
@@ -98,15 +102,21 @@ def capturaLogs():
             error = log.findError()
             # Se existe erro prepara o envio de um email
             if error == True:
-                print(f"Erros encontrados no arquivo {key}")
+                # registra no log que encontrou erro
+                write_log(f"Erros encontrados no arquivo {key}")
+                # chama a função para enviar e-mail
                 prepareEmail(file_name=key, log=value)
             
     # fecho a conexão com o host remoto
     ssh.close(ssh_client)
 
 def main():
+    # Salva um log de execução
+    write_log("Iniciando execução")
     # Inicio a captura dos logs no servidor
     capturaLogs()
+
+    write_log("Fim da execução")
 
 if __name__ == "__main__":
     main()
