@@ -40,11 +40,9 @@ def getFileNameOnly(files):
 
     for item in files:
         try:
-            print(item)
             name = re.search("\D*[.]txt$", item)
             file_names.append(name[0].strip())
         except Exception:
-            print(f"Erro no item: {item}")
             pass
 
     return file_names
@@ -63,7 +61,6 @@ def getFilteredLogs(file_name, log_lines):
         string com os logs filtrados
     """
     yesterday = datetime.now() - timedelta(days=DAYS_TO_SUBTRACT)
-    print(yesterday)
     date = yesterday.strftime("%Y/%m/%d")
 
     yesterday_logs = ''

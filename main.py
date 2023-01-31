@@ -53,7 +53,7 @@ def capturaLogs():
     SERVER = os.getenv("SERVER")
     SERVER_LOGIN = os.getenv("SERVER_LOGIN")
     SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
-    PATH = os.getenv("PATH")
+    LOGS_PATH = os.getenv("LOGS_PATH")
 
     # Crio um objeto ssh
     ssh = SSH(SERVER, SERVER_LOGIN, SERVER_PASSWORD)
@@ -61,7 +61,7 @@ def capturaLogs():
     ssh_client = ssh.connect()
     # Pego todos os arquivos de log que estão no caminho informado
     # e as demais informações que o comando "ls -la" do linux retorna
-    files = ssh.getFiles(PATH, ssh_client)
+    files = ssh.getFiles(LOGS_PATH, ssh_client)
 
     # As tarefas do Pentaho rodam entre as 18h e 23H
     # Esse script roda após as 00h
@@ -79,10 +79,9 @@ def capturaLogs():
         
         # Percorro a lista com o nome dos arquivos
         for file_name in file_names:
-            print(file_name)
             # Para cada nome de arquivo, chamo a função responsável por capturar
             # as últimas 100 linhas de log presentes nesse arquivo.
-            log_lines = ssh.getLogFromFile(PATH, file_name, ssh_client)
+            log_lines = ssh.getLogFromFile(LOGS_PATH, file_name, ssh_client)
 
             # Filtro os logs para pegar apenas a data de ontem
             logs = getFilteredLogs(file_name, log_lines)
