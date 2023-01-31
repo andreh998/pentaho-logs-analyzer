@@ -19,6 +19,9 @@ RUN pip3 install -r requirements.txt
 # para dentro da imagem
 COPY . .
 
+# cria o arquivo de log do script
+RUN touch /app/log_analyzer/main.log
+
 # o comando abaixo vai dizer para o crontab 
 # todos os dias da semana, às 2h da madrugada.
 RUN crontab -l | { cat; echo "00 2 * * * python3 /app/log_analyzer/main.py"; } | crontab -
@@ -26,11 +29,3 @@ RUN crontab -l | { cat; echo "00 2 * * * python3 /app/log_analyzer/main.py"; } |
 # comando executado quando o container iniciar
 # ficará ouvindo os logs de execução do script
 CMD cron && tail -f /app/log_analyzer/main.log
-
-# para criar a imagem rodo o comando abaixo no terminal mesmo diretório do Dockerfile
-# . indica que o dockerfile está nesse mesmo diretório
-# -t Nome da imagem
-# docker build . -t <nome_da_imagem>
-
-# para iniciar o container use o comando abaixo:
-# docker run -d --name <nome_do_container> <nome_da_imagem> 

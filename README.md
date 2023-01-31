@@ -1,6 +1,7 @@
 # Analizador de logs do pentaho
 
-- Acessar o diretório principal do projeto e executar o comando abaixo para instalar as bibliotecas:
+- No diretório do projeto:
     ```python
-	pip install -r requirements.txt
+	docker build . -t logs_analyzer
+	docker run -d --name logs_analyzer logs_analyzer 
 	```
