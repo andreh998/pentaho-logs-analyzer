@@ -10,7 +10,7 @@ def write_log(message):
         type (str): recebe uma string 'info', 'warning', 'error' ou 'debug'
         message (str): a mensagem que deverá ser salva no log
     """
-    filename = os.getcwd()
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S', filename=f'{filename}/main.log', level=logging.INFO)
+    # path = os.getcwd()    
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S', filename=f'/app/log/main.log', level=logging.INFO)
     logging.info(message)
     

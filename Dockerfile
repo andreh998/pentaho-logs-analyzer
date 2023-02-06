@@ -1,31 +1,34 @@
-# imagem base com ubuntu
-FROM ubuntu:latest
+# Imagem do python
+FROM python:3.9-alpine
 
-# diretório padrão
-WORKDIR /app/log_analyzer
+# Defino um diretório de trabalho
+WORKDIR /app
 
-# instala o python3, pip3 e cron
-RUN apt-get update
-RUN apt-get -y install python3 python3-pip
-RUN apt-get -y install cron
+# Defino o timezone do container, para o mesmo que o host
+# Isso garante que o cron rode no horário correto
+ENV TZ="America/Sao_Paulo"
 
-# copia o arquivo com todas as libs necessárias
-COPY requirements.txt requirements.txt
+# Crio o diretório e o arquivo para os logs do python
+RUN mkdir /app/log
+RUN touch /app/log/main.log
 
-# executa o comando para instalar as libs
-RUN pip3 install -r requirements.txt
-
-# copia todos os demais arquivos do diretório atual 
-# para dentro da imagem
+# Copio tudo para o diretório de trabalho
 COPY . .
 
-# cria o arquivo de log do script
-RUN touch /app/log_analyzer/main.log
+# Mapeio o diretório onde ficará o log de execução do script
+# O arquivo será mapeado na máquina em:
+# /var/lib/docker/volumes/<volume_name>/_data/main.log
+VOLUME /app/log
 
-# o comando abaixo vai dizer para o crontab 
-# todos os dias da semana, às 2h da madrugada.
-RUN crontab -l | { cat; echo "00 2 * * * python3 /app/log_analyzer/main.py"; } | crontab -
+# Instalo os pacotes necessários
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# comando executado quando o container iniciar
-# ficará ouvindo os logs de execução do script
-CMD cron && tail -f /app/log_analyzer/main.log
+# Instalo o cron
+# RUN apk add --update --no-cache cron
+
+# Adiciono uma job que executa o script a cada 10 minutos
+# -u Força os fluxos stdout e stderr a serem sem buffer.
+RUN echo "00 02 * * * python3 -u /app/main.py" >> /etc/crontabs/root
+
+# Inicio o cron
+CMD ["crond", "-f", "-l", "8"]
